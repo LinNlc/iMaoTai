@@ -19,17 +19,16 @@ def get_aes_key():
     return private_key_b
 
 
-def encrypt_aes_ecb(ciphertext, key):
+def encrypt_aes_ecb(plain_str, key):
     """
-    无偏移的AES解密
-    :param ciphertext: 需要解密的密文
+    无偏移的AES加密
+    :param plain_str: 需要加密的明文
     :param key: AES私钥
-    :return: 解密后的明文
+    :return: base64后的密文
     """
-    ciphertext = base64.b64decode(ciphertext)
     cipher = AES.new(key, AES.MODE_ECB)
-    plain_str = cipher.decrypt(ciphertext)
-    return plain_str.decode('latin1').strip()  # 使用 latin1 字符集解码字节字符串
+    ciphertext = cipher.encrypt(pad(plain_str.encode(), AES.block_size))
+    return base64.b64encode(ciphertext).decode()
 
 
 def decrypt_aes_ecb(ciphertext, key):
@@ -41,8 +40,8 @@ def decrypt_aes_ecb(ciphertext, key):
     """
     ciphertext = base64.b64decode(ciphertext)
     cipher = AES.new(key, AES.MODE_ECB)
-    plain_str = unpad(cipher.decrypt(ciphertext), AES.block_size)
-    return plain_str.decode()
+    plain_str = cipher.decrypt(ciphertext)
+    return plain_str.decode('latin1').strip()  # 使用 latin1 字符集解码字节字符串
 
 
 '''
